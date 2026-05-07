@@ -39,6 +39,9 @@ mongoose.connect(MONGO_URI)
 // Middleware
 // --------------------
 app.use(express.static(path.join(__dirname, "public")));
+app.get("/health", (req, res) => {
+    res.status(200).json({ ok: true, service: "birthday-chat" });
+});
 
 function sanitizeInput(value) {
     return typeof value === "string" ? value.trim() : "";
@@ -333,12 +336,8 @@ io.on("connection", (socket) => {
 });
 
 // --------------------
-// Start Server (local only)
+// Start Server
 // --------------------
-if (process.env.VERCEL !== "1") {
-    server.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
-    });
-}
-
-module.exports = app;
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
