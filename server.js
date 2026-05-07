@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const express = require("express");
 const http = require("http");
+const path = require("path");
 const mongoose = require("mongoose");
 const { Server } = require("socket.io");
 
@@ -37,7 +38,7 @@ mongoose.connect(MONGO_URI)
 // --------------------
 // Middleware
 // --------------------
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 function sanitizeInput(value) {
     return typeof value === "string" ? value.trim() : "";
@@ -332,8 +333,12 @@ io.on("connection", (socket) => {
 });
 
 // --------------------
-// Start Server
+// Start Server (local only)
 // --------------------
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+if (process.env.VERCEL !== "1") {
+    server.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
